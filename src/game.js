@@ -401,6 +401,7 @@ function start(){
 
         //music
         var musicF = new BABYLON.Sound("musicF", "music/musicFond.mp3", scene, null, {loop : true, autoplay : true});
+        musicF.play();
 
         //change color back
         let gChangeColor = BABYLON.Mesh.CreateGround("gChangeColor", 50, 50, 1, scene, false);
