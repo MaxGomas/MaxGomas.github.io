@@ -400,8 +400,7 @@ function start(){
         scene.enablePhysics(g, physicsPlugin);
 
         //music
-        var musicF = new BABYLON.Sound("musicF", "music/musicFond.mp3", scene, null, {loop : true, autoplay : true});
-        musicF.play();
+        var musicF = new BABYLON.Sound("musicF", "music/musicFond.mp3", scene, function(){musicF.play()}, {loop : true, autoplay : true});
 
         //change color back
         let gChangeColor = BABYLON.Mesh.CreateGround("gChangeColor", 50, 50, 1, scene, false);
