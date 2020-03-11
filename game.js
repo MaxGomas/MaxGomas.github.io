@@ -9,12 +9,14 @@ function start(){
     var scene;
     var time = 0; // seconds
     var score = 0;
+    var BLUE = new BABYLON.Color3(0.76,0.98,0.97);
+    var YELLOW = new BABYLON.Color3(0.99, 0.99, 0.59);
+    var RED = new BABYLON.Color3(0.99, 0.41, 0.39);
+    var GREEN = new BABYLON.Color3(0.46, 0.86, 0.46);
+    
 
     function sameColor(ground, sphere){
-        return (ground.material.emissiveColor.r === sphere.material.emissiveColor.r && 
-                ground.material.emissiveColor.b === sphere.material.emissiveColor.b &&
-                ground.material.emissiveColor.g === sphere.material.emissiveColor.g
-            )
+        return (ground.couleur === sphere.couleur);
     }
 
     function distanceEucl(x1, y1, x2, y2){
@@ -23,7 +25,7 @@ function start(){
 
     function intersectGround(object, sphere){
 
-        //console.log((sphere.material.emissiveColor===ground.material.emissiveColor))
+//        console.log((sphere.material.diffuseColor===ground.material.diffuseColor))
 
         if(object.id.includes("cercle")){
             //console.log(distanceEucl(sphere.x, sphere.z, object._absolutePosition.x, object._absolutePosition.z))
@@ -52,10 +54,8 @@ function start(){
     function createGround(x){
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 200, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("ground", scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
-        // groundMaterial.specularTexture = new BABYLON.Texture("images/grass.jpg", scene);
-        // groundMaterial.emissiveTexture = new BABYLON.Texture("PATH TO IMAGE", scene);
-        // groundMaterial.ambientTexture = new BABYLON.Texture("PATH TO IMAGE", scene);
+        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        
         groundMaterial.specularColor = BABYLON.Color3.Black();
         ground.material = groundMaterial;
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -68,7 +68,7 @@ function start(){
         x = posGround;
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 75, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("ground", scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundMaterial.specularColor = BABYLON.Color3.Black();
         ground.material = groundMaterial;
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -77,11 +77,11 @@ function start(){
         //Ground changement
         gChangeColor.position = new BABYLON.Vector3(0,0,x);
         gChangeColor.physicsImpostor = new BABYLON.PhysicsImpostor(gChangeColor, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);	
-
+        
         //Ground après
         let ground2 = BABYLON.Mesh.CreateGround("ground", 200, 75, 1, scene, false);
         let groundMaterial2 = new BABYLON.StandardMaterial("ground", scene);
-        groundMaterial2.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        //groundMaterial2.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundMaterial2.specularColor = BABYLON.Color3.Black();
         ground2.material = groundMaterial;
         ground2.physicsImpostor = new BABYLON.PhysicsImpostor(ground2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -94,9 +94,10 @@ function start(){
         x = posGround;
         //Red 
         let ground1 = BABYLON.Mesh.CreateGround("ground1", 50, 200, 1, scene, false);
+        ground1.couleur = "RED";
         let ground1Material = new BABYLON.StandardMaterial("ground1", scene);
         ground1Material.specularColor = BABYLON.Color3.Black();
-        ground1Material.emissiveColor = BABYLON.Color3.Red();
+        ground1Material.diffuseColor = RED;
         ground1.material = ground1Material;
         ground1.physicsImpostor = new BABYLON.PhysicsImpostor(ground1, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground1.position = new BABYLON.Vector3(-75,0,x);
@@ -106,9 +107,10 @@ function start(){
         
         //Green
         let ground2 = BABYLON.Mesh.CreateGround("ground2", 50, 200, 1, scene, false);
+        ground2.couleur = "GREEN";
         let ground2Material = new BABYLON.StandardMaterial("ground2", scene);
         ground2Material.specularColor = BABYLON.Color3.Black();
-        ground2Material.emissiveColor = BABYLON.Color3.Green();
+        ground2Material.diffuseColor = GREEN;
         ground2.material = ground2Material;
         ground2.physicsImpostor = new BABYLON.PhysicsImpostor(ground2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground2.position = new BABYLON.Vector3(-25,0,x);
@@ -117,9 +119,10 @@ function start(){
 
         //Blue
         let ground3 = BABYLON.Mesh.CreateGround("ground3", 50, 200, 1, scene, false);
+        ground3.couleur = "BLUE";
         let ground3Material = new BABYLON.StandardMaterial("ground3", scene);
         ground3Material.specularColor = BABYLON.Color3.Black();
-        ground3Material.emissiveColor = BABYLON.Color3.Blue();
+        ground3Material.diffuseColor = BLUE;
         ground3.material = ground3Material;
         ground3.physicsImpostor = new BABYLON.PhysicsImpostor(ground3, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground3.position = new BABYLON.Vector3(25,0,x);
@@ -128,17 +131,15 @@ function start(){
     
         //Yellow
         let ground4 = BABYLON.Mesh.CreateGround("ground4", 50, 200, 1, scene, false);
+        ground4.couleur = "YELLOW";
         let ground4Material = new BABYLON.StandardMaterial("ground4", scene);
         ground4Material.specularColor = BABYLON.Color3.Black();
-        ground4Material.emissiveColor = BABYLON.Color3.Yellow();
+        ground4Material.diffuseColor = YELLOW;
         ground4.material = ground4Material;
         ground4.physicsImpostor = new BABYLON.PhysicsImpostor(ground4, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground4.position = new BABYLON.Vector3(75,0,x);
         //Idem
         tabGround.push(ground4);
-
-        console.log(tabGround[0]);
-        console.log(sphere.material);
 
         posGround+=200;
         
@@ -150,7 +151,7 @@ function start(){
 
         let groundBall = BABYLON.Mesh.CreateGround("groundBall",200, 200, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("groundBall", scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundBall.material = groundMaterial;
         groundBall.material = groundMaterial;
         groundBall.position = new BABYLON.Vector3(0,0,x);
@@ -158,16 +159,24 @@ function start(){
         let ballMat = new BABYLON.StandardMaterial("ground", scene);
         let rand = Math.random();
         if(rand < 1/4){
-            ballMat.emissiveColor = BABYLON.Color3.Red();
+            //ballMat.diffuseColor = BABYLON.Color3.Red();
+            ball.couleur= "RED";
+            ballMat.diffuseColor = RED;
         }
         else if(rand >= 1/4 && rand < 2/4){
-            ballMat.emissiveColor = BABYLON.Color3.Yellow();
+            //ballMat.diffuseColor = BABYLON.Color3.Yellow();
+            ball.couleur= "YELLOW";
+            ballMat.diffuseColor = YELLOW;
         }
         else if(rand >= 2/4 && rand < 3/4) {
-            ballMat.emissiveColor = BABYLON.Color3.Blue();
+            //ballMat.diffuseColor = BABYLON.Color3.Blue();
+            ball.couleur= "BLUE";
+            ballMat.diffuseColor = BLUE;
         }
         else {
-            ballMat.emissiveColor = BABYLON.Color3.Green();
+            //ballMat.diffuseColor = BABYLON.Color3.Green();
+            ball.couleur= "GREEN";
+            ballMat.diffuseColor = GREEN;
         }
         ball.material = ballMat;
         ball.position.y = 16;
@@ -186,6 +195,8 @@ function start(){
         
         groundBall.physicsImpostor = new BABYLON.PhysicsImpostor(groundBall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         posGround+=200;
+
+        console.log(ball.couleur);
         
     }
 
@@ -195,7 +206,7 @@ function start(){
         let ground2Box = BABYLON.Mesh.CreateGround("ground2Box",200, 200, 1, scene, false);
         ground2Box.position = new BABYLON.Vector3(0,0,x);
         let groundMaterial = new BABYLON.StandardMaterial("groundBox", scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         ground2Box.material = groundMaterial;
         let box = BABYLON.MeshBuilder.CreateBox("Box",{height: 80, width: 60, depth: 10} ,scene);
         let box2 = BABYLON.MeshBuilder.CreateBox("Box2",{height: 80, width: 60, depth: 10} ,scene);
@@ -226,10 +237,10 @@ function start(){
         let groundBar = BABYLON.Mesh.CreateGround("groundBar",200, 200, 1, scene, false);
         groundBar.position = new BABYLON.Vector3(0,0,x);
         let groundMaterial = new BABYLON.StandardMaterial("groundBox", scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundBar.material = groundMaterial;
-        let bar = BABYLON.MeshBuilder.CreateBox("bar",{height: 20, width: 60, depth: 15} ,scene);
-        let bar2 = BABYLON.MeshBuilder.CreateBox("bar",{height: 20, width: 60, depth: 15} ,scene);
+        let bar = BABYLON.MeshBuilder.CreateBox("bar",{height: 30, width: 60, depth: 15} ,scene);
+        let bar2 = BABYLON.MeshBuilder.CreateBox("bar",{height: 30, width: 60, depth: 15} ,scene);
 
         BABYLON.Animation.CreateAndStartAnimation('boxscale', bar, 'scaling.x', 30, 120, 1.0, 1.5);  
         BABYLON.Animation.CreateAndStartAnimation('boxscale', bar2, 'scaling.x', 30, 120, 1.0, 1.5);        
@@ -237,6 +248,7 @@ function start(){
         bar.position.y = 40;
         bar.position.z = x;
         bar.position.x = 55;
+        
 
         bar2.position.y = 40;
         bar2.position.z = x;
@@ -257,7 +269,7 @@ function start(){
 
         let groundBox = BABYLON.Mesh.CreateGround("groundBox",200, 200, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("groundBox", scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundBox.material = groundMaterial;
         groundBox.position = new BABYLON.Vector3(0,0,x);
         let box = BABYLON.MeshBuilder.CreateBox("Box",{height: 30, width: 100, depth: 15} ,scene);
@@ -303,7 +315,8 @@ function start(){
         disc2.position = new BABYLON.Vector3(0,65,0);
         let gDisc2Material = new BABYLON.StandardMaterial("ground2", scene);
         gDisc2Material.specularColor = BABYLON.Color3.Black();
-        gDisc2Material.emissiveColor = BABYLON.Color3.Blue();
+        gDisc2Material.diffuseColor = BLUE;
+        disc2.couleur = "BLUE";
         disc2.material = gDisc2Material;
         disc2.physicsImpostor = new BABYLON.PhysicsImpostor(disc2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
@@ -315,7 +328,8 @@ function start(){
         disc3.position = new BABYLON.Vector3(0,-65,0);
         let gDisc3Material = new BABYLON.StandardMaterial("ground3", scene);
         gDisc3Material.specularColor = BABYLON.Color3.Black();
-        gDisc3Material.emissiveColor = BABYLON.Color3.Red();
+        gDisc3Material.diffuseColor = RED;
+        disc3.couleur = "RED";
         disc3.material = gDisc3Material;
         disc3.physicsImpostor = new BABYLON.PhysicsImpostor(disc3, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
@@ -326,7 +340,8 @@ function start(){
         disc4.position = new BABYLON.Vector3(65,0,0);
         let gDisc4Material = new BABYLON.StandardMaterial("ground4", scene);
         gDisc4Material.specularColor = BABYLON.Color3.Black();
-        gDisc4Material.emissiveColor = BABYLON.Color3.Yellow();
+        gDisc4Material.diffuseColor = YELLOW;
+        disc4.couleur = "YELLOW";
         disc4.material = gDisc4Material;
         disc4.physicsImpostor = new BABYLON.PhysicsImpostor(disc4, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
@@ -337,7 +352,8 @@ function start(){
         disc5.position = new BABYLON.Vector3(-65,0,0);
         let gDisc5Material = new BABYLON.StandardMaterial("ground5", scene);
         gDisc5Material.specularColor = BABYLON.Color3.Black();
-        gDisc5Material.emissiveColor = BABYLON.Color3.Green();
+        gDisc5Material.diffuseColor = GREEN;
+        disc5.couleur = "GREEN";
         disc5.material = gDisc5Material;
         disc5.physicsImpostor = new BABYLON.PhysicsImpostor(disc5, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
@@ -386,7 +402,7 @@ function start(){
         //change color back
         let gChangeColor = BABYLON.Mesh.CreateGround("gChangeColor", 50, 50, 1, scene, false);
         let gMaterialChangeColor = new BABYLON.StandardMaterial("gMaterialChangeColor", scene);
-        gMaterialChangeColor.emissiveColor = BABYLON.Color3.White();
+        gMaterialChangeColor.diffuseColor = BABYLON.Color3.White();
         gChangeColor.material = gMaterialChangeColor;
 
         
@@ -394,25 +410,35 @@ function start(){
         //scene.clearColor = new BABYLON.Color3(0, 0, 0);
 
         //light
-        //let light1 = new BABYLON.PointLight("omni", new BABYLON.Vector3(0, 50, 0), scene);
+        let light2 = new BABYLON.PointLight("omni", new BABYLON.Vector3(0, 50, 0), scene);
         let light1 = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 1), scene);
+        //let light1 = new BABYLON.DirectionalLight("Hemilight", new BABYLON.Vector3(0, -1, 0), scene);
+
         light1.intensity = 0.5;
+        light1.specularColor = BABYLON.Color3.White();
         light1.diffuse = BABYLON.Color3.White();
         light1.state = "off";
 
+        light2.intensity = 0.5;
+        light2.specularColor = BABYLON.Color3.White();
+        light2.diffuse = BABYLON.Color3.White();
+        light2.state = "off";
          // Sphere
-         sphere = BABYLON.Mesh.CreateSphere("sphere", 16, 26, scene);
+        
+         //sphere = BABYLON.Mesh.CreateSphere("sphere", 16, 26, scene);
+         sphere = BABYLON.MeshBuilder.CreateIcoSphere("ico", {radius: 13, radiusY: 13, subdivisions: 2}, scene);
+         sphere.couleur = "YELLOW";
          let sphereMat = new BABYLON.StandardMaterial("ground", scene);
-         sphereMat.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-         sphereMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-         sphereMat.emissiveColor = BABYLON.Color3.Purple();
+         //sphereMat.specularColor = BABYLON.Color3.White();
+         sphereMat.diffuseColor = YELLOW;
+         //sphereMat.emissiveColor = YELLOW;
          sphere.material = sphereMat;
          sphere.position.y +=30;
  
          camera.target = sphere;
          camera.radius = 200;
  
-         light1.parent = camera;
+         light2.parent = camera;
 	
 
         //let shadowGenerator = new BABYLON.ShadowGenerator(1024, light1);
@@ -484,21 +510,29 @@ function start(){
         scene.onBeforeRenderObservable.add(()=>{
         
 
-            if(inputMap["z"] || inputMap["Z"]){
-                sphere.position.z+=3
+            if(inputMap["z"]){
+                sphere.position.z+=3;
+                sphere.rotate(BABYLON.Axis.X, Math.PI/15 , BABYLON.Space.WORLD);
+                score = sphere.position.z / 200;
+                textBlock2.text = new String(Math.trunc(score));
             } 
-            if(inputMap["q"] || inputMap["Q"]){
+            if(inputMap["q"]){
                 sphere.position.x-=3
+                sphere.rotate(BABYLON.Axis.Z, Math.PI/15 , BABYLON.Space.WORLD);
             } 
-            if(inputMap["s"] || inputMap["S"]){
+            if(inputMap["s"]){
                 sphere.position.z-=3
+                sphere.rotate(BABYLON.Axis.X, -(Math.PI/15) , BABYLON.Space.WORLD);
             } 
-            if(inputMap["d"] || inputMap["D"]){
+            if(inputMap["d"]){
                 sphere.position.x+=3
+                sphere.rotate(BABYLON.Axis.Z, -(Math.PI/15) , BABYLON.Space.WORLD);
             } 
             if(sphere.position.y <= -200){
                 meurt();
             }
+            sphere.physicsImpostor.setAngularVelocity( BABYLON.Vector3.Zero() );
+            //sphere.physicsImpostor.setLinearVelocity( BABYLON.Vector3.Zero() );  
 
             
         });
@@ -519,16 +553,20 @@ function start(){
             if(sphere.position.z > gChangeColor.position.z -25 && sphere.position.z < gChangeColor.position.z +25 ){
                 let rand = Math.random();
                 if(rand < 1/4){
-                    sphereMat.emissiveColor = BABYLON.Color3.Red();
+                    sphereMat.diffuseColor = RED;
+                    sphere.couleur = "RED";
                 }
                 else if(rand >= 1/4 && rand < 2/4){
-                    sphereMat.emissiveColor = BABYLON.Color3.Yellow();
+                    sphereMat.diffuseColor = YELLOW;
+                    sphere.couleur = "YELLOW";
                 }
                 else if(rand >= 2/4 && rand < 3/4) {
-                    sphereMat.emissiveColor = BABYLON.Color3.Blue();
+                    sphereMat.diffuseColor = BLUE;
+                    sphere.couleur = "BLUE";
                 }
                 else {
-                    sphereMat.emissiveColor = BABYLON.Color3.Green();
+                    sphereMat.diffuseColor = GREEN;
+                    sphere.couleur = "GREEN";
                 }
             }
         })
