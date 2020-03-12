@@ -1,10 +1,18 @@
 function start(){
-        
+    
+
+    window.addEventListener("keydown", function(e) {
+        if(document.activeElement!=document.getElementById("gameCanvas"));
+        document.getElementById("gameCanvas").focus();
+        window.removeEventListener("keydown", this);
+    });
+
     var canvas = document.getElementById("gameCanvas");
     var engine = new BABYLON.Engine(canvas, true); 
     var posGround = 0;
     var sphere;
-    var tabGround = new Array(); 
+    var obstacleGround = new Array(); 
+    var tabPlatform = new Array();
     var textureGround = "https://www.babylonjs-playground.com/textures/grass.jpg";
     var scene;
     var time = 0; // seconds
@@ -13,6 +21,7 @@ function start(){
     var YELLOW = new BABYLON.Color3(0.99, 0.99, 0.59);
     var RED = new BABYLON.Color3(0.99, 0.41, 0.39);
     var GREEN = new BABYLON.Color3(0.46, 0.86, 0.46);
+    openFullscreen();
     
 
     function sameColor(ground, sphere){
@@ -50,8 +59,24 @@ function start(){
         }
     }
 
+    function openFullscreen() {
+        let elem = canvas;
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+          elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+          elem.msRequestFullscreen();
+        }
+        canvas.focus();
+      }
+
 
     function createGround(x){
+        let tab = new Array();
+
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 200, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("ground", scene);
         //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
@@ -61,10 +86,17 @@ function start(){
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground.position = new BABYLON.Vector3(0,0,posGround);
         posGround += 200;
+
+        tab.push(ground);
+        
+        tabPlatform.push(tab);
+
     }
 
-    function createChangeColorGround(gChangeColor){
+    function createChangeColorGround(scene, sphereMat){
         //Ground avant
+        let tab = new Array();
+
         x = posGround;
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 75, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("ground", scene);
@@ -74,6 +106,12 @@ function start(){
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground.position = new BABYLON.Vector3(0,0,(x-25)-(75/2));
         
+        //change color back
+        let gChangeColor = BABYLON.Mesh.CreateGround("gChangeColor", 50, 50, 1, scene, false);
+        let gMaterialChangeColor = new BABYLON.StandardMaterial("gMaterialChangeColor", scene);
+        gMaterialChangeColor.diffuseColor = BABYLON.Color3.White();
+        gChangeColor.material = gMaterialChangeColor;
+        //gChangeColor.position = new BABYLON.Vector3(0,400, -2000);
         //Ground changement
         gChangeColor.position = new BABYLON.Vector3(0,0,x);
         gChangeColor.physicsImpostor = new BABYLON.PhysicsImpostor(gChangeColor, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);	
@@ -87,10 +125,40 @@ function start(){
         ground2.physicsImpostor = new BABYLON.PhysicsImpostor(ground2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground2.position = new BABYLON.Vector3(0,0,(x+25)+(75/2));
         posGround+=200;
+
+        scene.onBeforeRenderObservable.add(()=>{
+            if(sphere.position.z > gChangeColor.position.z -25 && sphere.position.z < gChangeColor.position.z +25 ){
+                let rand = Math.random();
+                if(rand < 1/4){
+                    sphereMat.diffuseColor = RED;
+                    sphere.couleur = "RED";
+                }
+                else if(rand >= 1/4 && rand < 2/4){
+                    sphereMat.diffuseColor = YELLOW;
+                    sphere.couleur = "YELLOW";
+                }
+                else if(rand >= 2/4 && rand < 3/4) {
+                    sphereMat.diffuseColor = BLUE;
+                    sphere.couleur = "BLUE";
+                }
+                else {
+                    sphereMat.diffuseColor = GREEN;
+                    sphere.couleur = "GREEN";
+                }
+            }
+        })
+
+        tab.push(ground);
+        tab.push(gChangeColor);
+        tab.push(ground2);
+
+        tabPlatform.push(tab);
     }
 
 
     function obstacleGroundColor(){ 
+        let tab = new Array();
+
         x = posGround;
         //Red 
         let ground1 = BABYLON.Mesh.CreateGround("ground1", 50, 200, 1, scene, false);
@@ -103,7 +171,7 @@ function start(){
         ground1.position = new BABYLON.Vector3(-75,0,x);
         
         //On push notre obstacle dans le tableau d'obstacle
-        tabGround.push(ground1);
+        obstacleGround.push(ground1);
         
         //Green
         let ground2 = BABYLON.Mesh.CreateGround("ground2", 50, 200, 1, scene, false);
@@ -115,7 +183,7 @@ function start(){
         ground2.physicsImpostor = new BABYLON.PhysicsImpostor(ground2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground2.position = new BABYLON.Vector3(-25,0,x);
         //Idem
-        tabGround.push(ground2);
+        obstacleGround.push(ground2);
 
         //Blue
         let ground3 = BABYLON.Mesh.CreateGround("ground3", 50, 200, 1, scene, false);
@@ -127,7 +195,7 @@ function start(){
         ground3.physicsImpostor = new BABYLON.PhysicsImpostor(ground3, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground3.position = new BABYLON.Vector3(25,0,x);
         //Idem
-        tabGround.push(ground3);
+        obstacleGround.push(ground3);
     
         //Yellow
         let ground4 = BABYLON.Mesh.CreateGround("ground4", 50, 200, 1, scene, false);
@@ -139,13 +207,22 @@ function start(){
         ground4.physicsImpostor = new BABYLON.PhysicsImpostor(ground4, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         ground4.position = new BABYLON.Vector3(75,0,x);
         //Idem
-        tabGround.push(ground4);
+        obstacleGround.push(ground4);
 
         posGround+=200;
+
+        tab.push(ground1);
+        tab.push(ground2);
+        tab.push(ground3);
+        tab.push(ground4);
+
+
+        tabPlatform.push(tab);
         
     }
 
     function obstacleBallColor(scene){
+        let tab = new Array();
 
         x = posGround;
 
@@ -184,7 +261,7 @@ function start(){
 
         ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 40, restitution: 0.9, friction: 0.05 }, scene);
 
-        tabGround.push(ball);
+        obstacleGround.push(ball);
 
         let pos = 0;
         scene.registerBeforeRender(function () {
@@ -196,11 +273,16 @@ function start(){
         groundBall.physicsImpostor = new BABYLON.PhysicsImpostor(groundBall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         posGround+=200;
 
-        console.log(ball.couleur);
+        tab.push(groundBall);
+        tab.push(ball);
+
+        tabPlatform.push(tab);
         
     }
 
     function moveBoxObstacle(scene){
+        let tab = new Array();
+
         x = posGround;
 
         let ground2Box = BABYLON.Mesh.CreateGround("ground2Box",200, 200, 1, scene, false);
@@ -216,8 +298,8 @@ function start(){
         box2.position.z = x+40;
 
        
-        box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 200, restitution: 0.9, friction: 0.05 }, scene);
-        box2.physicsImpostor = new BABYLON.PhysicsImpostor(box2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 200, restitution: 0.9, friction: 0.05 }, scene);
+        box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 400, restitution: 0.9, friction: 0.05 }, scene);
+        box2.physicsImpostor = new BABYLON.PhysicsImpostor(box2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 400, restitution: 0.9, friction: 0.05 }, scene);
 
         let a = 0;
         scene.registerBeforeRender(function () {
@@ -229,9 +311,17 @@ function start(){
 
         ground2Box.physicsImpostor = new BABYLON.PhysicsImpostor(ground2Box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         posGround+=200;
+
+        tab.push(ground2Box);
+        tab.push(box);
+        tab.push(box2);
+
+        tabPlatform.push(tab);
     }
 
     function obstacleBar(scene){
+        let tab = new Array();
+
         x = posGround;
 
         let groundBar = BABYLON.Mesh.CreateGround("groundBar",200, 200, 1, scene, false);
@@ -254,17 +344,24 @@ function start(){
         bar2.position.z = x;
         bar2.position.x = -55;
 
-        bar.physicsImpostor = new BABYLON.PhysicsImpostor(bar, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 200, restitution: 0.9, friction: 0.05 }, scene);
-        bar2.physicsImpostor = new BABYLON.PhysicsImpostor(bar2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 200, restitution: 0.9, friction: 0.05 }, scene);
+        bar.physicsImpostor = new BABYLON.PhysicsImpostor(bar, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 900, restitution: 0.9, friction: 0.05 }, scene);
+        bar2.physicsImpostor = new BABYLON.PhysicsImpostor(bar2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 900, restitution: 0.9, friction: 0.05 }, scene);
 
         groundBar.physicsImpostor = new BABYLON.PhysicsImpostor(groundBar, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         posGround+=200;
         
+        tab.push(groundBar);
+        tab.push(bar);
+        tab.push(bar2);
+
+        tabPlatform.push(tab);
 
     }
 
 
     function labyrinthe(){
+        
+        let tab = new Array();
         x = posGround;
 
         let groundBox = BABYLON.Mesh.CreateGround("groundBox",200, 200, 1, scene, false);
@@ -296,9 +393,17 @@ function start(){
         groundBox.physicsImpostor = new BABYLON.PhysicsImpostor(groundBox, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         posGround+=200;
 
+        tab.push(groundBox);
+        tab.push(box);
+        tab.push(box2);
+        tab.push(box3);
+
+        tabPlatform.push(tab);
     }
 
     function moveGroundObstacle(scene){
+        let tab = new Array();
+
         x = posGround;
         
         let cylinder = BABYLON.Mesh.CreateCylinder("cylinder", 5000, 65, 65, 60, 1, scene, false, BABYLON.Mesh.DEFAULTSIDE);
@@ -316,50 +421,46 @@ function start(){
         let gDisc2Material = new BABYLON.StandardMaterial("ground2", scene);
         gDisc2Material.specularColor = BABYLON.Color3.Black();
         gDisc2Material.diffuseColor = BLUE;
-        disc2.couleur = "BLUE";
         disc2.material = gDisc2Material;
         disc2.physicsImpostor = new BABYLON.PhysicsImpostor(disc2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
         disc2.parent = disc;
 
-        tabGround.push(disc2);
+        obstacleGround.push(disc2);
     
         let disc3 = BABYLON.MeshBuilder.CreateDisc("cercle3", {tessellation: 50, radius : 35}, scene);
         disc3.position = new BABYLON.Vector3(0,-65,0);
         let gDisc3Material = new BABYLON.StandardMaterial("ground3", scene);
         gDisc3Material.specularColor = BABYLON.Color3.Black();
         gDisc3Material.diffuseColor = RED;
-        disc3.couleur = "RED";
         disc3.material = gDisc3Material;
         disc3.physicsImpostor = new BABYLON.PhysicsImpostor(disc3, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
         disc3.parent = disc;
-        tabGround.push(disc3);
+        obstacleGround.push(disc3);
         
         let disc4 = BABYLON.MeshBuilder.CreateDisc("cercle4", {tessellation: 50, radius : 35}, scene);
         disc4.position = new BABYLON.Vector3(65,0,0);
         let gDisc4Material = new BABYLON.StandardMaterial("ground4", scene);
         gDisc4Material.specularColor = BABYLON.Color3.Black();
         gDisc4Material.diffuseColor = YELLOW;
-        disc4.couleur = "YELLOW";
         disc4.material = gDisc4Material;
         disc4.physicsImpostor = new BABYLON.PhysicsImpostor(disc4, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
         disc4.parent = disc;
-        tabGround.push(disc4);
+        obstacleGround.push(disc4);
     
         let disc5 = BABYLON.MeshBuilder.CreateDisc("cercle5", {tessellation: 50, radius : 35}, scene);
         disc5.position = new BABYLON.Vector3(-65,0,0);
         let gDisc5Material = new BABYLON.StandardMaterial("ground5", scene);
         gDisc5Material.specularColor = BABYLON.Color3.Black();
         gDisc5Material.diffuseColor = GREEN;
-        disc5.couleur = "GREEN";
         disc5.material = gDisc5Material;
         disc5.physicsImpostor = new BABYLON.PhysicsImpostor(disc5, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
         
         disc5.parent = disc;
 
-        tabGround.push(disc5);
+        obstacleGround.push(disc5);
     
         let a = 0;
         scene.registerBeforeRender(function () {
@@ -368,6 +469,25 @@ function start(){
 
         posGround += 200;
 
+        tab.push(cylinder);
+        tab.push(disc);
+        tab.push(disc2);
+        tab.push(disc3);
+        tab.push(disc4);
+        tab.push(disc5);
+
+        tabPlatform.push(tab);
+
+    }
+
+    function decalerGround(tabObj){
+        for(let i=0; i<tabObj.length;i++){
+            let x = tabObj[i].position.x;
+            let y = tabObj[i].position.y;
+            let z = tabObj[i].position.z;
+            tabObj[i].position = new BABYLON.Vector3(x,y,posGround+z);
+        }
+        //posGround += 200;
     }
 
 
@@ -402,12 +522,13 @@ function start(){
         //music
         var musicF = new BABYLON.Sound("musicF", "music/musicFond.mp3", scene, function(){musicF.play()}, {loop : true, autoplay : true});
 
-        //change color back
-        let gChangeColor = BABYLON.Mesh.CreateGround("gChangeColor", 50, 50, 1, scene, false);
-        let gMaterialChangeColor = new BABYLON.StandardMaterial("gMaterialChangeColor", scene);
-        gMaterialChangeColor.diffuseColor = BABYLON.Color3.White();
-        gChangeColor.material = gMaterialChangeColor;
-
+        // //change color back
+        // let gChangeColor = BABYLON.Mesh.CreateGround("gChangeColor", 50, 50, 1, scene, false);
+        // let gMaterialChangeColor = new BABYLON.StandardMaterial("gMaterialChangeColor", scene);
+        // gMaterialChangeColor.diffuseColor = BABYLON.Color3.White();
+        // gChangeColor.material = gMaterialChangeColor;
+        // gChangeColor.position = new BABYLON.Vector3(0,400, -2000);
+        
         
 
         //scene.clearColor = new BABYLON.Color3(0, 0, 0);
@@ -428,7 +549,7 @@ function start(){
         light2.state = "off";
          // Sphere
         
-         //sphere = BABYLON.Mesh.CreateSphere("sphere", 16, 26, scene);
+        //sphere = BABYLON.Mesh.CreateSphere("sphere", 16, 26, scene);
          sphere = BABYLON.MeshBuilder.CreateIcoSphere("ico", {radius: 13, radiusY: 13, subdivisions: 2}, scene);
          sphere.couleur = "YELLOW";
          let sphereMat = new BABYLON.StandardMaterial("ground", scene);
@@ -465,8 +586,11 @@ function start(){
 
         //Ground suivant
         createGround();
+
+        //moveGroundObstacle(scene);
+
         
-        createChangeColorGround(gChangeColor);
+        createChangeColorGround(scene, sphereMat);
 
         createGround();
 
@@ -484,17 +608,17 @@ function start(){
 
         obstacleGroundColor();
 
-        createGround();
+       // createGround();
 
-        moveGroundObstacle(scene);
+     
 
-        createGround();
+       // createGround();
 
         moveBoxObstacle(scene);
 
-        obstacleGroundColor();
+        // obstacleGroundColor();
 
-        createGround();
+        // createGround();
 
        
 
@@ -516,8 +640,22 @@ function start(){
             if(inputMap["z"]){
                 sphere.position.z+=3;
                 sphere.rotate(BABYLON.Axis.X, Math.PI/15 , BABYLON.Space.WORLD);
+                ancScore = score;
                 score = sphere.position.z / 200;
-                textBlock2.text = new String(Math.trunc(score));
+                score = Math.trunc(score);
+                textBlock2.text = new String(score);
+                if(ancScore!=score){
+                    console.log("changement de plateforem");
+                    let min = 0;
+                    for(var i = 1; i < tabPlatform.length ; i++){
+                        if(tabPlatform[i][0]._absolutePosition.z < tabPlatform[min][0]._absolutePosition.z){
+                            min = i;
+                        }
+                    }
+                    console.log("min : "+min);
+                    decalerGround(tabPlatform[min]);
+
+                }
             } 
             if(inputMap["q"]){
                 sphere.position.x-=3
@@ -541,8 +679,8 @@ function start(){
         });
 
         scene.onBeforeRenderObservable.add(()=>{
-            for(i in tabGround){
-                if (intersectGround(tabGround[i], sphere)) {
+            for(i in obstacleGround){
+                if (intersectGround(obstacleGround[i], sphere)) {
                     console.log("PERDU");
                     meurt();
                 }else{
@@ -552,27 +690,27 @@ function start(){
         });
 
         //Change Ball Color on platform
-        scene.onBeforeRenderObservable.add(()=>{
-            if(sphere.position.z > gChangeColor.position.z -25 && sphere.position.z < gChangeColor.position.z +25 ){
-                let rand = Math.random();
-                if(rand < 1/4){
-                    sphereMat.diffuseColor = RED;
-                    sphere.couleur = "RED";
-                }
-                else if(rand >= 1/4 && rand < 2/4){
-                    sphereMat.diffuseColor = YELLOW;
-                    sphere.couleur = "YELLOW";
-                }
-                else if(rand >= 2/4 && rand < 3/4) {
-                    sphereMat.diffuseColor = BLUE;
-                    sphere.couleur = "BLUE";
-                }
-                else {
-                    sphereMat.diffuseColor = GREEN;
-                    sphere.couleur = "GREEN";
-                }
-            }
-        })
+        // scene.onBeforeRenderObservable.add(()=>{
+        //     if(sphere.position.z > gChangeColor.position.z -25 && sphere.position.z < gChangeColor.position.z +25 ){
+        //         let rand = Math.random();
+        //         if(rand < 1/4){
+        //             sphereMat.diffuseColor = RED;
+        //             sphere.couleur = "RED";
+        //         }
+        //         else if(rand >= 1/4 && rand < 2/4){
+        //             sphereMat.diffuseColor = YELLOW;
+        //             sphere.couleur = "YELLOW";
+        //         }
+        //         else if(rand >= 2/4 && rand < 3/4) {
+        //             sphereMat.diffuseColor = BLUE;
+        //             sphere.couleur = "BLUE";
+        //         }
+        //         else {
+        //             sphereMat.diffuseColor = GREEN;
+        //             sphere.couleur = "GREEN";
+        //         }
+        //     }
+        // })
 
     // Create Impostors
 
@@ -644,6 +782,7 @@ function start(){
 
         /******* End of the create scene function ******/    
         scene = createScene(); //Call the createScene function
+        
 
         // Register a render loop to repeatedly render the scene
         engine.runRenderLoop(function () {
