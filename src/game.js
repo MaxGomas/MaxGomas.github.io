@@ -13,7 +13,7 @@ function start(){
     var sphere;
     var obstacleGround = new Array(); 
     var tabPlatform = new Array();
-    var textureGround = "https://www.babylonjs-playground.com/textures/grass.jpg";
+    var textureGround = "https://www.babylonjs-playground.com/textures/speckles.jpg";
     var scene;
     var time = 0; // seconds
     var score = 0;
@@ -39,6 +39,8 @@ function start(){
         if(object.id.includes("cercle")){
             //console.log(distanceEucl(sphere.x, sphere.z, object._absolutePosition.x, object._absolutePosition.z))
             if(!sameColor(sphere, object) && distanceEucl(sphere.position.x, sphere.position.z, object._absolutePosition.x, object._absolutePosition.z)<30){
+                console.log((sphere.couleur));
+                console.log((object.couleur));
                 return true;
             }else{
                 return false;
@@ -79,7 +81,7 @@ function start(){
 
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 200, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("ground", scene);
-        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         
         groundMaterial.specularColor = BABYLON.Color3.Black();
         ground.material = groundMaterial;
@@ -100,7 +102,7 @@ function start(){
         x = posGround;
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 75, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("ground", scene);
-        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundMaterial.specularColor = BABYLON.Color3.Black();
         ground.material = groundMaterial;
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -119,7 +121,7 @@ function start(){
         //Ground après
         let ground2 = BABYLON.Mesh.CreateGround("ground", 200, 75, 1, scene, false);
         let groundMaterial2 = new BABYLON.StandardMaterial("ground", scene);
-        //groundMaterial2.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        groundMaterial2.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundMaterial2.specularColor = BABYLON.Color3.Black();
         ground2.material = groundMaterial;
         ground2.physicsImpostor = new BABYLON.PhysicsImpostor(ground2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -228,7 +230,7 @@ function start(){
 
         let groundBall = BABYLON.Mesh.CreateGround("groundBall",200, 200, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("groundBall", scene);
-        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundBall.material = groundMaterial;
         groundBall.material = groundMaterial;
         groundBall.position = new BABYLON.Vector3(0,0,x);
@@ -288,7 +290,7 @@ function start(){
         let ground2Box = BABYLON.Mesh.CreateGround("ground2Box",200, 200, 1, scene, false);
         ground2Box.position = new BABYLON.Vector3(0,0,x);
         let groundMaterial = new BABYLON.StandardMaterial("groundBox", scene);
-        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         ground2Box.material = groundMaterial;
         let box = BABYLON.MeshBuilder.CreateBox("Box",{height: 80, width: 60, depth: 10} ,scene);
         let box2 = BABYLON.MeshBuilder.CreateBox("Box2",{height: 80, width: 60, depth: 10} ,scene);
@@ -327,7 +329,7 @@ function start(){
         let groundBar = BABYLON.Mesh.CreateGround("groundBar",200, 200, 1, scene, false);
         groundBar.position = new BABYLON.Vector3(0,0,x);
         let groundMaterial = new BABYLON.StandardMaterial("groundBox", scene);
-        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundBar.material = groundMaterial;
         let bar = BABYLON.MeshBuilder.CreateBox("bar",{height: 30, width: 60, depth: 15} ,scene);
         let bar2 = BABYLON.MeshBuilder.CreateBox("bar",{height: 30, width: 60, depth: 15} ,scene);
@@ -366,7 +368,7 @@ function start(){
 
         let groundBox = BABYLON.Mesh.CreateGround("groundBox",200, 200, 1, scene, false);
         let groundMaterial = new BABYLON.StandardMaterial("groundBox", scene);
-        //groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture(textureGround, scene);
         groundBox.material = groundMaterial;
         groundBox.position = new BABYLON.Vector3(0,0,x);
         let box = BABYLON.MeshBuilder.CreateBox("Box",{height: 30, width: 100, depth: 15} ,scene);
@@ -374,7 +376,7 @@ function start(){
         let box3 = BABYLON.MeshBuilder.CreateBox("Box3",{height: 30, width: 100, depth: 15} ,scene);
 
         box.position.y = 15;
-        box.position.z = x-60;
+        box.position.z = x-75;
         box.position.x = 50;
         
         box2.position.y = 15;
@@ -382,7 +384,7 @@ function start(){
         box2.position.x = -50;
         
         box3.position.y = 15;
-        box3.position.z = x+60;
+        box3.position.z = x+75;
         box3.position.x = 50;
 
     
@@ -417,6 +419,7 @@ function start(){
         disc.rotate(BABYLON.Axis.X, Math.PI/2 , BABYLON.Space.WORLD);
 
         let disc2 = BABYLON.MeshBuilder.CreateDisc("cercle2", {tessellation: 50, radius : 35}, scene);
+        disc2.couleur = "BLUE";
         disc2.position = new BABYLON.Vector3(0,65,0);
         let gDisc2Material = new BABYLON.StandardMaterial("ground2", scene);
         gDisc2Material.specularColor = BABYLON.Color3.Black();
@@ -432,6 +435,7 @@ function start(){
         disc3.position = new BABYLON.Vector3(0,-65,0);
         let gDisc3Material = new BABYLON.StandardMaterial("ground3", scene);
         gDisc3Material.specularColor = BABYLON.Color3.Black();
+        disc3.couleur = "RED";
         gDisc3Material.diffuseColor = RED;
         disc3.material = gDisc3Material;
         disc3.physicsImpostor = new BABYLON.PhysicsImpostor(disc3, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -443,6 +447,7 @@ function start(){
         disc4.position = new BABYLON.Vector3(65,0,0);
         let gDisc4Material = new BABYLON.StandardMaterial("ground4", scene);
         gDisc4Material.specularColor = BABYLON.Color3.Black();
+        disc4.couleur = "YELLOW";
         gDisc4Material.diffuseColor = YELLOW;
         disc4.material = gDisc4Material;
         disc4.physicsImpostor = new BABYLON.PhysicsImpostor(disc4, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -454,6 +459,7 @@ function start(){
         disc5.position = new BABYLON.Vector3(-65,0,0);
         let gDisc5Material = new BABYLON.StandardMaterial("ground5", scene);
         gDisc5Material.specularColor = BABYLON.Color3.Black();
+        disc5.couleur= "GREEN";
         gDisc5Material.diffuseColor = GREEN;
         disc5.material = gDisc5Material;
         disc5.physicsImpostor = new BABYLON.PhysicsImpostor(disc5, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9, friction: 0.05 }, scene);
@@ -471,10 +477,6 @@ function start(){
 
         tab.push(cylinder);
         tab.push(disc);
-        tab.push(disc2);
-        tab.push(disc3);
-        tab.push(disc4);
-        tab.push(disc5);
 
         tabPlatform.push(tab);
 
@@ -486,6 +488,10 @@ function start(){
             let y = tabObj[i].position.y;
             let z = tabObj[i].position.z;
             tabObj[i].position = new BABYLON.Vector3(x,y,posGround+z);
+            console.log(tabObj[i].id);
+            console.log("x : " + x);
+            console.log("Y : " + y);
+            console.log("z : " + z);
         }
         //posGround += 200;
     }
@@ -511,7 +517,7 @@ function start(){
         camera.attachControl(canvas, true);
         camera.lowerBetaLimit = 0.1;
         camera.upperBetaLimit = (Math.PI / 2) * 0.99;
-        camera.lowerRadiusLimit = 150;
+        camera.lowerRadiusLimit = 250;
         
         // Enable Physics
         let g = new BABYLON.Vector3(0, -400, 0);
@@ -586,9 +592,6 @@ function start(){
 
         //Ground suivant
         createGround();
-
-        //moveGroundObstacle(scene);
-
         
         createChangeColorGround(scene, sphereMat);
 
@@ -608,17 +611,11 @@ function start(){
 
         obstacleGroundColor();
 
-       // createGround();
+        createGround();
 
-     
+        moveGroundObstacle(scene);
 
-       // createGround();
 
-        moveBoxObstacle(scene);
-
-        // obstacleGroundColor();
-
-        // createGround();
 
        
 
@@ -645,14 +642,14 @@ function start(){
                 score = Math.trunc(score);
                 textBlock2.text = new String(score);
                 if(ancScore!=score){
-                    console.log("changement de plateforem");
+                  //  console.log("changement de plateforem");
                     let min = 0;
                     for(var i = 1; i < tabPlatform.length ; i++){
                         if(tabPlatform[i][0]._absolutePosition.z < tabPlatform[min][0]._absolutePosition.z){
                             min = i;
                         }
                     }
-                    console.log("min : "+min);
+                  //  console.log("min : "+min);
                     decalerGround(tabPlatform[min]);
 
                 }
